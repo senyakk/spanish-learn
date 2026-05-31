@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Flame, BookOpen, Grid3X3 } from 'lucide-react';
+import { Flame, BookOpen, Grid3X3, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const tabs = [
   { href: '/learn', label: 'Learn', Icon: Flame },
   { href: '/vocabulary', label: 'Vocab', Icon: BookOpen },
   { href: '/categories', label: 'Categories', Icon: Grid3X3 },
+  { href: '/settings', label: 'Settings', Icon: Settings },
 ];
 
 export default function BottomNav() {
