@@ -2,6 +2,43 @@ import { UserProgress } from './types';
 
 const PROGRESS_KEY = 'sl_progress';
 const ONBOARDED_KEY = 'sl_onboarded';
+const USER_ID_KEY = 'sl_user_id';
+
+export function getUserId(): string {
+  if (typeof window === 'undefined') return '';
+  let id = localStorage.getItem(USER_ID_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(USER_ID_KEY, id);
+  }
+  return id;
+}
+
+export async function loadProgressFromDb(): Promise<UserProgress | null> {
+  const userId = getUserId();
+  if (!userId) return null;
+  try {
+    const res = await fetch(`/api/progress?userId=${userId}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function saveProgressToDb(progress: UserProgress): Promise<void> {
+  const userId = getUserId();
+  if (!userId) return;
+  try {
+    await fetch('/api/progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, progress }),
+    });
+  } catch {
+    // fall back to localStorage only
+  }
+}
 const EXERCISE_CACHE_KEY = 'sl_exercise_cache';
 const CACHE_TTL_DAYS = 7;
 

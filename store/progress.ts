@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { SRSCard, UserProgress } from '@/lib/types';
-import { loadProgress, saveProgress } from '@/lib/storage';
+import { loadProgress, saveProgress, loadProgressFromDb, saveProgressToDb } from '@/lib/storage';
 import { sm2, Quality } from '@/lib/srs';
 
 interface ProgressStore extends UserProgress {
@@ -26,9 +26,14 @@ export const useProgressStore = create<ProgressStore>((set, get) => ({
   totalExercisesCompleted: 0,
   isLoaded: false,
 
-  load: () => {
-    const progress = loadProgress();
-    set({ ...progress, isLoaded: true });
+  load: async () => {
+    const local = loadProgress();
+    set({ ...local, isLoaded: true });
+    const remote = await loadProgressFromDb();
+    if (remote) {
+      saveProgress(remote);
+      set({ ...remote, isLoaded: true });
+    }
   },
 
   updateCard: (card: SRSCard) => {
@@ -36,6 +41,7 @@ export const useProgressStore = create<ProgressStore>((set, get) => ({
       const cards = { ...state.cards, [card.id]: card };
       const next = { ...state, cards };
       saveProgress(next);
+      saveProgressToDb(next);
       return { cards };
     });
   },
@@ -52,6 +58,7 @@ export const useProgressStore = create<ProgressStore>((set, get) => ({
       const cards = { ...state.cards, [card.id]: card };
       const next = { ...state, cards };
       saveProgress(next);
+      saveProgressToDb(next);
       return { cards };
     });
   },
@@ -61,6 +68,7 @@ export const useProgressStore = create<ProgressStore>((set, get) => ({
       const xp = state.xp + amount;
       const next = { ...state, xp };
       saveProgress(next);
+      saveProgressToDb(next);
       return { xp };
     });
   },
@@ -83,6 +91,7 @@ export const useProgressStore = create<ProgressStore>((set, get) => ({
 
       const next = { ...state, streak, lastStudyDate: today };
       saveProgress(next);
+      saveProgressToDb(next);
       return { streak, lastStudyDate: today };
     });
   },
@@ -91,6 +100,7 @@ export const useProgressStore = create<ProgressStore>((set, get) => ({
     set((state) => {
       const next = { ...state, selectedCategoryIds: ids };
       saveProgress(next);
+      saveProgressToDb(next);
       return { selectedCategoryIds: ids };
     });
   },
@@ -100,6 +110,7 @@ export const useProgressStore = create<ProgressStore>((set, get) => ({
       const total = state.totalExercisesCompleted + 1;
       const next = { ...state, totalExercisesCompleted: total };
       saveProgress(next);
+      saveProgressToDb(next);
       return { totalExercisesCompleted: total };
     });
   },
