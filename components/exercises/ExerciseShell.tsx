@@ -20,7 +20,7 @@ import { CheckCircle, XCircle, Trophy } from 'lucide-react';
 
 const SESSION_SIZE = 10;
 const XP_CORRECT = 10;
-const XP_HINT = 5;
+const _XP_HINT = 5;
 
 async function fetchExercise(
   card: SRSCard,

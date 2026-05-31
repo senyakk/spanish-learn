@@ -1,4 +1,4 @@
-import { UserProgress, SRSCard } from './types';
+import { UserProgress } from './types';
 
 const PROGRESS_KEY = 'sl_progress';
 const ONBOARDED_KEY = 'sl_onboarded';
