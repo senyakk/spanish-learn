@@ -27,7 +27,7 @@ export default function SettingsPage() {
 
     const remote = await loadProgressFromDb();
     if (remote) {
-      const { loadProgress, saveProgress } = await import('@/lib/storage');
+      const { saveProgress } = await import('@/lib/storage');
       saveProgress(remote);
       store.load();
       setStatus('success');
